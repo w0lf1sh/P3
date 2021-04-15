@@ -7,7 +7,7 @@ misma y distribuir copias locales (*clones*) del mismo a los distintos integrant
 
 Recuerde realizar el *pull request* al repositorio original una vez completada la práctica.
 
-Ejercicios básicos para Andres
+Ejercicios básicos
 ------------------
 
 - Complete el código de los ficheros necesarios para realizar la detección de pitch usando el programa
