@@ -69,7 +69,7 @@ int main(int argc, const char *argv[]) {
   vector<float>::iterator iX;
   vector<float> f0;
   for (iX = x.begin(); iX + n_len < x.end(); iX = iX + n_shift) {
-    float f = analyzer(iX, iX + n_len);
+    float f = analyzer(iX, iX + n_len); //El operador '()' nos calcula el pitch del frame x (mirar pitch_analyzer.h) 
     f0.push_back(f);
   }
 
