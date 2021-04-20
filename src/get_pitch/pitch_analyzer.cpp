@@ -12,6 +12,7 @@ namespace upc {
 
     for (unsigned int l = 0; l < r.size(); ++l) {
   		/// \TODO Compute the autocorrelation r[l]
+      
       r[l] = 0;
       for(unsigned int n = l; n < x.size(); n++) {
         r[l] += x[n] * x[n-l];
@@ -20,7 +21,10 @@ namespace upc {
 
     if (r[0] == 0.0F) //to avoid log() and divide zero 
       r[0] = 1e-10; 
+
+  /// \DONE Aplicamos la fórmula matemática de la autocorrelación
   }
+  
 
   void PitchAnalyzer::set_window(Window win_type) {
     if (frameLen == 0)
@@ -70,7 +74,8 @@ namespace upc {
     //Compute correlation
     autocorrelation(x, r);
 
-    vector<float>::const_iterator iR = r.begin(), iRMax = iR + npitch_min;
+    vector<float>::const_iterator iR = r.begin(), iRMax = iR + npitch_min; //Obtenemos un iterator del tipo float
+                                                                           //la funcion begin() devuelve un iterador hacia el inicio del vector
 
     /// \TODO 
 	/// Find the lag of the maximum value of the autocorrelation away from the origin.<br>
