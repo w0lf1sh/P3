@@ -20,13 +20,16 @@ static const char USAGE[] = R"(
 get_pitch - Pitch Detector 
 
 Usage:
-    get_pitch [options] <input-wav> <output-txt>
+    get_pitch [options] <input-wav> <output-txt> 
     get_pitch (-h | --help)
     get_pitch --version
 
 Options:
-    -h, --help  Show this screen
-    --version   Show the version of the project
+    -p    FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: 40.0]
+    -r1   FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.85]
+    -rlag FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
+    -h, --help                        Show this screen
+    --version                         Show the version of the project
 
 Arguments:
     input-wav   Wave file with the audio signal
@@ -46,7 +49,9 @@ int main(int argc, const char *argv[]) {
 
 	std::string input_wav = args["<input-wav>"].asString();
 	std::string output_txt = args["<output-txt>"].asString();
-
+  float p = std::stof(args["--p_th"].asString());
+  float r1 = std::stof(args["--r1_th"].asString());
+  float rlag = std::stof(args["--rlag_th"].asString());
   // Read input sound file
   unsigned int rate;
   vector<float> x;
@@ -59,7 +64,7 @@ int main(int argc, const char *argv[]) {
   int n_shift = rate * FRAME_SHIFT;
 
   // Define analyzer
-  PitchAnalyzer analyzer(n_len, rate, PitchAnalyzer::HAMMING, 50, 500);
+  PitchAnalyzer analyzer(n_len, rate, p, r1, rlag, PitchAnalyzer::HAMMING, 50, 500);
 
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,

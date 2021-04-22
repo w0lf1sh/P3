@@ -22,7 +22,7 @@ namespace upc
         r[l] += x[n] * x[n - l];
       }
       // Valores de la autocorrelación de la trama salen en consola
-      #if 1
+      #if 0
         cout << r[l] << endl;
       #endif
     }
@@ -79,7 +79,7 @@ namespace upc
       trama = 1;
       return true;
     }
-    if (pot > potencia_inicial + 40 || (r1norm > 0.85 || rmaxnorm > 0.4)) //Mejorar potencia inicial, jugar con el 10.
+    if (pot > potencia_inicial + p_th || (r1norm > r1_th || rmaxnorm > rlag_th)) //Mejorar potencia inicial, jugar con el 10.
     {                                                                     //Mejor resultado con pot +40. Más sensato usar + 30
       return false; //Decidimos que es trama de VOZ / SONORA
     }
