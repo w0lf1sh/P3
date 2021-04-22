@@ -21,6 +21,7 @@ namespace upc
       {
         r[l] += x[n] * x[n - l];
       }
+      // añadir cout de la autocorrelación
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero
@@ -75,8 +76,8 @@ namespace upc
       trama = 1;
       return true;
     }
-    if (pot > potencia_inicial + 20 || (r1norm > 0.5 && rmaxnorm > 0.6)) //Mejorar potencia inicial, jugar con el 10.
-    {
+    if (pot > potencia_inicial + 40 || (r1norm > 0.85 && rmaxnorm > 0.4)) //Mejorar potencia inicial, jugar con el 10.
+    {                                                                     //Mejor resultado con pot +40. Más sensato usar + 30
       return false; //Decidimos que es trama de VOZ / SONORA
     }
     else
@@ -84,6 +85,7 @@ namespace upc
       return true; //Decidimos que es trama de SILENCIO / SORDA
     }
   }
+  /// \DONE A partir de los valores de potencia y autocorrelación, creamos un decisor de tramas sonoras/sordas
 
   float PitchAnalyzer::compute_pitch(vector<float> &x) const
   {
@@ -126,7 +128,7 @@ namespace upc
     //You can print these (and other) features, look at them using wavesurfer
     //Based on that, implement a rule for unvoiced
     //change to #if 1 and compile
-#if 0
+#if 1
     if (r[0] > 0.0F)
       cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
 #endif
