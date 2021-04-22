@@ -25,11 +25,11 @@ Usage:
     get_pitch --version
 
 Options:
-    -p    FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: 40.0]
-    -r1   FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.85]
-    -rlag FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
-    -h, --help                        Show this screen
-    --version                         Show the version of the project
+    -p FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: 40.0]
+    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.85]
+    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
+    -h, --help                     Show this screen
+    --version                      Show the version of the project
 
 Arguments:
     input-wav   Wave file with the audio signal
@@ -49,9 +49,11 @@ int main(int argc, const char *argv[]) {
 
 	std::string input_wav = args["<input-wav>"].asString();
 	std::string output_txt = args["<output-txt>"].asString();
+
   float p = std::stof(args["--p_th"].asString());
   float r1 = std::stof(args["--r1_th"].asString());
   float rlag = std::stof(args["--rlag_th"].asString());
+  /// \DONE Paso de parámetros por consola implementado
   // Read input sound file
   unsigned int rate;
   vector<float> x;
