@@ -1,21 +1,29 @@
-
-# Este código es el que hicimos para la P2. Tenemos que adaptarlo para que plotee un tramo sonoro con su periodo claro.
-#Tambien tiene que plotear la autocorrelación de ese mismo tramo.
-#Es posible que exista una mejor manera, pero se me ocurre sacar en 2 .txt tanto un tramo que sea sonoro como su autocorrelación
-#A partir de los .txt plotearemos tanto uno como otro
-
 import matplotlib.pyplot as plt
 import soundfile as sf
 import numpy as np
 
+#Read audio file
 audio, fm = sf.read('../../30ms.wav')
 
-t= np.arange(0, len(audio))/fm #Devuelve un vector de valores equispaciados entre 0 y la longitud del fichero. 
-                                  #(Normalizamos a fm)
+#Time axis
+time = (np.linspace(0, len(audio)-1, len(audio)))/fm 
+                                                 
+#Compute autocorrelation and axis
+r = np.correlate(audio, audio, "same")
+r = r / r[int(len(r)/2)] 
+raxis = np.arange(len(r))
 
-fig, axs = plt.subplots(2)
-fig.suptitle('Audio original VS Audio con silencios')
-axs[0].plot(t, audio)
-#axs[1].plot()  plot de la autocorrelación
+#Plotting the graphs
+plt.subplot(2,1,1)
+plt.plot(time, audio, lineWidth=0.75)
+plt.grid(True)
+plt.xlabel("Time(s)")
+plt.ylabel("amplitude")
+
+plt.subplot(2,1,2)
+plt.plot(raxis, r, lineWidth=0.75)
+plt.grid(True)
+plt.xlabel("Samples")
+plt.ylabel("autocorrelation")
 
 plt.show()  
