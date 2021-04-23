@@ -92,8 +92,9 @@ namespace upc
     {
       return true; //Decidimos que es trama de SILENCIO / SORDA
     }
+      /// \DONE A partir de los valores de potencia y autocorrelación, creamos un decisor de tramas sonoras/sordas
   }
-  /// \DONE A partir de los valores de potencia y autocorrelación, creamos un decisor de tramas sonoras/sordas
+
 
   float PitchAnalyzer::compute_pitch(vector<float> &x) const
   {

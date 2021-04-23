@@ -38,15 +38,15 @@ Arguments:
                     - If considered unvoiced, f0 must be set to f0 = 0
 )";
 
-int main(int argc, const char *argv[])
-{
-  /// \TODO
-  ///  Modify the program syntax and the call to **docopt()** in order to
-  ///  add options and arguments to the program.
-  std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
-                                                             {argv + 1, argv + argc}, // array of arguments, without the program name
-                                                             true,                    // show help if requested
-                                                             "2.0");                  // version string
+//    -x FLOAT, --x_th=FLOAT         Offset de la técnica de preprocesado Center-Clipping [default: ]
+int main(int argc, const char *argv[]) {
+	/// \TODO 
+	///  Modify the program syntax and the call to **docopt()** in order to
+	///  add options and arguments to the program.
+    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
+        {argv + 1, argv + argc},	// array of arguments, without the program name
+        true,    // show help if requested
+        "2.0");  // version string
 
   std::string input_wav = args["<input-wav>"].asString();
   std::string output_txt = args["<output-txt>"].asString();
@@ -73,7 +73,19 @@ int main(int argc, const char *argv[])
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
-
+  #if 1
+  float x_th = 0.00005;
+  for (unsigned int n=0; n < x.size(); n++){
+    if(x[n]>x_th){
+      x[n] = x[n] - x_th;
+    }else if(x[n]< -x_th){
+      x[n] = x[n] + x_th;
+    }else
+    x[n] = 0;
+  }
+  ///DONE Center clipping implementado
+  #endif
+  
   // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
   vector<float> f0;
