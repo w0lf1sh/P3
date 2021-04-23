@@ -13,7 +13,7 @@ RMAX=0
 RLAGMAX=0
 
 #Eliminamos el fichero scores en caso de que ya exista (para evitar poblemas a la hora de la evaluación)
-FILE=/home/claptor/PAV/P3/scores
+FILE=$HOME/PAV/P3/scores
 if [ -f "$FILE" ]
 then
     rm $FILE
