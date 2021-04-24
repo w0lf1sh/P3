@@ -24,3 +24,15 @@ pitch_evaluate = executable(
     link_with: lib_pav,
     install: true,
 )
+
+# Programa pitch_evaluate_thresholds
+exe = 'pitch_evaluate_thresholds'
+src = 'pitch_evaluate_thresholds.cpp'
+
+pitch_evaluate_thresholds = executable(
+    exe,
+    sources: src,
+    include_directories: inc,
+    link_with: lib_pav,
+    install: true,
+)
