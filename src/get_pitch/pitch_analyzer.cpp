@@ -21,10 +21,10 @@ namespace upc
       {
         r[l] += x[n] * x[n - l];
       }
-      // Valores de la autocorrelación de la trama salen en consola
-      #if 0
+// Valores de la autocorrelación de la trama salen en consola
+#if 0
         cout << r[l] << endl;
-      #endif
+#endif
     }
 
     if (r[0] == 0.0F) //to avoid log() and divide zero
@@ -44,6 +44,11 @@ namespace upc
     {
     case HAMMING:
       /// \TODO Implement the Hamming window
+      for (unsigned int i = 0; i < frameLen; i++)
+      {
+        window[i] = 0.54 - 0.46 * cos((2 * M_PI * i) / (frameLen - 1));
+      }
+        /// \DONE Hamming window implemented
       //break;
     case RECT:
     default:
