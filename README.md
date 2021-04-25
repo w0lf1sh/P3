@@ -161,13 +161,16 @@ if (pot < p_th || r1norm < r1_th || rmaxnorm < rlag_th)
 
 > Dándonos un score de 89,71%
 
+<img src="https://user-images.githubusercontent.com/65824775/116004859-f8d94280-a604-11eb-92d6-215563bd3f4a.png" width="500">
+
+
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
 	 
 > Gráfica con el filtro de mediana ya implementado (se incluye una explicación en el apartado de Ejercicios de ampliación):
 
-![grafPitchComparison](https://user-images.githubusercontent.com/65824775/116001175-7f852400-a5f3-11eb-95a4-122ebcbdf9ac.png | width = 720)
+<img src="https://user-images.githubusercontent.com/65824775/116001175-7f852400-a5f3-11eb-95a4-122ebcbdf9ac.png" width="500">
 
 Ejercicios de ampliación
 ------------------------
@@ -181,6 +184,56 @@ Ejercicios de ampliación
 
   * Inserte un *pantallazo* en el que se vea el mensaje de ayuda del programa y un ejemplo de utilización
     con los argumentos añadidos.
+> Queremos pasar a través de la consola los umbrales para nuestros distintos parámetros que determinan si una señal es sonora o no. Para ello usaremos la librería docopt (language for description of command-line interfaces). 
+> Primero modificamos el USAGE en get_pitch
+```c
+static const char USAGE[] = R"(
+get_pitch - Pitch Detector 
+Usage:
+    get_pitch [options] <input-wav> <output-txt> 
+    get_pitch (-h | --help)
+    get_pitch --version
+Options:
+    -p FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: -20.0]
+    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.9]
+    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
+    -x FLOAT, --x_th=FLOAT         Margen de center-clipping [default: 0.00007]
+    -h, --help                     Show this screen
+    --version                      Show the version of the project
+Arguments:
+    input-wav   Wave file with the audio signal
+    output-txt  Output file: ASCII file with the result of the detection:
+                    - One line per frame with the estimated f0
+                    - If considered unvoiced, f0 must be set to f0 = 0
+)";
+```
+> Posteriormente en el main, rescatamos los valores especificados en consola:
+```c
+int main(int argc, const char *argv[]) {
+	/// \TODO 
+	///  Modify the program syntax and the call to **docopt()** in order to
+	///  add options and arguments to the program.
+    std::map<std::string, docopt::value> args = docopt::docopt(USAGE,
+        {argv + 1, argv + argc},	// array of arguments, without the program name
+        true,    // show help if requested
+        "2.0");  // version string
+
+  std::string input_wav = args["<input-wav>"].asString();
+  std::string output_txt = args["<output-txt>"].asString();
+
+  float p = std::stof(args["--p_th"].asString());
+  float r1 = std::stof(args["--r1_th"].asString());
+  float rlag = std::stof(args["--rlag_th"].asString());
+  float x_th = std::stof(args["--x_th"].asString());
+  /// \DONE Paso de parámetros por consola implementado
+```
+> (usamos la función stof() para pasar de string a float)
+> Por último modificamos el constructor  del Pitch_Analyzer en pitch_analyzer.h para que tenga en cuenta los nuevos umbrales y reemplazamos los valores que hasta ahora especificabamos manualmente en el código, por estas nuevas variables
+> Mensaje de ayuda del programa:
+> 
+![mensajeAyuda](https://user-images.githubusercontent.com/65824775/116001699-0a671e00-a5f6-11eb-9709-111a3253ea6c.png)
+
+> Probamos el programa sin especificar ningún valor. Nos esperamos por lo tanto que use los valores de por defecto. Realizamos una comparación con f0ref y obtenemos el mismo valor que si reemplazamos los umbrales creados para la ocasión por los valores especificados por defecto. Posteriormente se especifican unos valores por consola, y nuevamente coinciden con los valores que obtendríamos si reemplazasemos directamente los umbrales en el código por los especificados.
 
 - Implemente las técnicas que considere oportunas para optimizar las prestaciones del sistema de detección
   de pitch.
@@ -205,7 +258,188 @@ Ejercicios de ampliación
   También se valorará la realización de un estudio de los parámetros involucrados. Por ejemplo, si se opta
   por implementar el filtro de mediana, se valorará el análisis de los resultados obtenidos en función de
   la longitud del filtro.
-   
+  
+### Center Clipping
+El center clipping es una técnica que trata de aumentar la intensidad de los armónicos de orden elevado, y poner a cero los instantes de tiempo en los que la señal tiene un amplitud menor, permitiendo asi una mayor robustez frente al ruido.
+Hemos decidido implementar las dos variantes del clipping existentes, con o sin offset. En base a las dos fórmulas siguientes, hemos propuesto el código de debajo:
+![centerClipping](https://user-images.githubusercontent.com/65824775/116004128-a6e2ed80-a601-11eb-8419-f3dda092d9f7.png)
+Versión con offset:
+```c
+/// \TODO
+  /// Preprocess the input signal in order to ease pitch estimation. For instance,
+  /// central-clipping or low pass filtering may be used.
+  #if 0
+  float x_th = 0.00005;
+  for (unsigned int n=0; n < x.size(); n++){
+    if(x[n]>x_th){
+      x[n] = x[n] - x_th;
+    }else if(x[n]< -x_th){
+      x[n] = x[n] + x_th;
+    }else
+    x[n] = 0;
+  }
+  ///DONE Center clipping implementado (con offset)
+```
+Versión sin offset:
+```c
+#if 1
+  for (unsigned int n=0; n < x.size(); n++){
+    if(x[n]<x_th && x[n]>-x_th){
+      x[n] = 0;
+    }
+  }
+  ///DONE Center clipping implementado (sin offset)
+  #endif
+```
+Además, decidimos pasar los valores de estos thresholds también como parámetros por consola. Vemos que  nos sale mejor resultado cuando usamos la opción sin offset, donde nos mejora nuestra mejor puntuación en 0.03%
+
+### Script para la optimización de thresholds
+LINKS que hemos consultado para familiarizarnos con el lenguaje de Bash Shell
+
+https://www.tutorialspoint.com/unix/unix-what-is-shell.htm
+
+https://devhints.io/bash
+
+Queremos aprovechar la implementación del pase de parámetros por consola en nuestro código, para diseñar un script que pruebe todas las combinaciones de los valores de estos umbrales y  tras evaluarlos en la base de datos, nos señale cuál es la mejor combinación. 
+Habiendo previsto que el número de cálculos que va a tenerse que realizar una vez ejecutado el script va a ser bastante elevado, hemos creado paralelamente un script prueba.sh donde realizaremos pequeñas pruebas, valga la redundancia, para asegurarnos de cada paso del código.
+
+Crearemos un nuevo programa, pitch_evaluate_thresholds que usaremos como alternativa al pitch_evaluate normal, para poder sacar SOLAMENTE el score final que es el único que evaluará nuestro script. 
+Para ello creamos entonces un nuevo .cpp quedándonos solo con los cout que nos interesa.
+
+![pitchEvaluate1](https://user-images.githubusercontent.com/65824775/116004320-7cddfb00-a602-11eb-8cec-3986b20c42b5.png)
+
+Si miramos el resto del código, no hay más modificaciones que lo que se ve en la imagen de encima, partes de código comentadas para que salga en consola solo el score final.
+Modificamos el meson.build para crear el nuevo programa. 
+
+![pitchEvaluate2](https://user-images.githubusercontent.com/65824775/116004326-82d3dc00-a602-11eb-9645-81484336f302.png)
+
+Pasamos ahora al código del propio script. Primero inicializamos los parámetros de interés y creamos un triple bucle de for para poder crear todas las combinaciones posibles entre los umbrales dentro de unos intervalos.
+```c
+#!/bin/bash
+
+GETF0="get_pitch"
+EVALUATE="pitch_evaluate_thresholds"
+
+#Inicialización de los parámetros
+INDICE=0
+
+SCOREMAX=0
+
+PMAX=0
+RMAX=0
+RLAGMAX=0
+
+#Eliminamos el fichero scores en caso de que ya exista (para evitar poblemas a la hora de la evaluación)
+FILE=$HOME/PAV/P3/scores
+if [ -f "$FILE" ]
+then
+    rm $FILE
+fi
+
+#Combinación de los valores de los umbrales
+for ((p_th=-15;p_th>=-40;p_th-=5))
+do
+    for r1_th in $(seq 0.0 .1 1) #((r1_th=0;r_th<=1;r_th+=0.05))
+    do
+        for rlag_th in $(seq 0.0 .1 1) #((rlag_th=0;rlag_th<=1;rlag_th+=0.05))
+        do
+```
+Basándonos en el código de los shells facilitados, invocamos el programa get_pitch para cada audio de la base de datos con los valores de los umbrales que haya a cada vuelta.
+Tras esto, evaluamos los resultados con el nuevo programa “pitch_evaluate_thresholds” y guardamos el score de cada vuelta en un fichero llamado “scores”. Tras esto, abrimos el fichero “scores” y evaluamos si el score actual es mayor al score que por el momento sea el mayor. Si es asi, el mayor score se modificara, y guardamos además los valores de los umbrales con los que se ha conseguido dicho score.
+
+```c
+#Invocamos a get_pitch para cada audio de la BD con los valores de umbrales
+            for fwav in pitch_db/train/*.wav; 
+            do
+                ff0=${fwav/.wav/.f0}
+                $GETF0 $fwav $ff0 "-p $p_th -r $r1_th -m $rlag_th" > /dev/null || (echo "Error in $GETF0 $fwav $ff0"; exit 1)
+            done
+            #Evaluamos el rendimiento de nuestro pitch_analyzer, y guardamos el score final en el fichero 'scores'
+            $EVALUATE pitch_db/train/*.f0ref >> $FILE
+
+            scores=($(cat scores)) #Abrimos el ficheros scores
+
+            if [[ ${scores[INDICE]} > $SCOREMAX ]]
+                then
+                    SCOREMAX=${scores[INDICE]}
+                    PMAX=$p_th
+                    RMAX=$r1_th
+                    RLAGMAX=$rlag_th
+            fi
+            INDICE=$((INDICE + 1))
+            echo "$INDICE"
+        done
+    done   
+done
+```
+Finalmente mostramos el resultado final en consola indicando el score máximo alcanzado y los valores de los umbrales con los que se alcanzo.
+
+```c
+echo "El score más alto es de $SCOREMAX% y se da para los siguientes valores de umbrales: "
+echo "POTENCIA: $PMAX     AUTOCORRELACIÓN (en 1): $RMAX      AUTOCORRELACIÓN (en pitch): $RLAGMAX"
+```
+Se hace el script ejecutable utilizando el comando chmod +x y el resultado que se ve en consola es el siguiente:
+![resultadoScript](https://user-images.githubusercontent.com/65824775/116004490-291fe180-a603-11eb-9164-f495cdd11d6a.png)
+
+Realizar un script de estas magnitudes está bien, pero el peso computacional es elevado y el tiempo de ejecución también (todo depende de qué valores escojamos para los intervalos en el for). Tambien puede resultar en que nos adaptemos demasiado a esta base de datos, y que si nos evaluamos en otra base de datos, (o en una parte no visible de esta misma BD), el score final acabe por decrementarse.
+
+### Implementación ventana de Hamming
+
+![eqHamming](https://user-images.githubusercontent.com/65824775/116004532-61272480-a603-11eb-91ea-dcc5b4004a45.png)
+
+Siguiendo la formula anterior se implementa la ventana de Hamming, aunque no se obtiene un mejor resultado de F-Score:
+
+```c
+case HAMMING:
+      /// \TODO Implement the Hamming window
+      for (unsigned int i = 0; i < frameLen; i++)
+      {
+        window[i] = 0.54 - 0.46 * cos((2 * M_PI * i) / (frameLen - 1));
+      }
+        /// \DONE Hamming window implemented
+      //break;
+```
+### Implementación filtro de Mediana
+
+Link utilizado de referencia para la implementación:
+http://fourier.eng.hmc.edu/e161/lectures/smooth_sharpen/node2.html
+
+Tras probarse varias longitudes del filtro de mediana, se obtiene la mejor relación entre propagación de errores y minimización de gross error (visible en los spikes del pitch de las gráficas comparativas con el pitch de Wavesurfer) con una longitud de 3:
+```c
+ /// \TODO
+  /// Postprocess the estimation in order to supress errors. For instance, a median filter
+  /// or time-warping may be used.
+#if 1
+  for (unsigned int i = 1; i < f0.size() - 1; i++)
+  {
+    vector<float> arr;
+    arr.push_back(f0[i]);
+    arr.push_back(f0[i + 1]);
+    arr.push_back(f0[i - 1]);
+
+    //sorting array
+    if (arr[1] < arr[0])
+      swap(arr[0], arr[1]);
+
+    if (arr[2] < arr[1])
+    {
+      swap(arr[1], arr[2]);
+      if (arr[1] < arr[0])
+        swap(arr[1], arr[0]);
+    }
+    f0[i] = arr[1];
+  }
+  /// \DONE Implementado filtro de 3 posiciones de mediana.
+```
+Gráfica del pitch sin filtro de mediana:
+
+<img src="https://user-images.githubusercontent.com/65824775/116004697-2ec9f700-a604-11eb-9f1d-13ae206e7e49.png" width="500">
+
+
+Gráfica del pitch con filtro de mediana:
+
+<img src="https://user-images.githubusercontent.com/65824775/116001175-7f852400-a5f3-11eb-95a4-122ebcbdf9ac.png" width="500">
+
 
 Evaluación *ciega* del detector
 -------------------------------
