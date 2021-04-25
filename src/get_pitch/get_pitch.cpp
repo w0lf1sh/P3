@@ -84,7 +84,7 @@ int main(int argc, const char *argv[]) {
     }else
     x[n] = 0;
   }
-  ///DONE Center clipping implementado (con offset)
+  /// \DONE Center clipping implementado (con offset)
   #endif
 
    #if 1
