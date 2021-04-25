@@ -50,10 +50,42 @@ void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) co
 	 NOTA: es más que probable que tenga que usar Python, Octave/MATLAB u otro programa semejante para
 	 hacerlo. Se valorará la utilización de la librería matplotlib de Python.
 
+![grafAutocorrelacion](https://user-images.githubusercontent.com/65824775/116000269-ca9d3800-a5ef-11eb-8e67-0e2404de3dbd.png)
+
+
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
+     
+```c
+for (iR = r.begin() + npitch_min; iR < r.begin() + npitch_max; iR++)
+    {
+      if (*iR > *iRMax)
+      {
+        iRMax = iR;
+      }
+    }
+```
 
    * Implemente la regla de decisión sonoro o sordo e inserte el código correspondiente.
+> La potencia nos servirá para descartar una gran parte de las tramas sordas que detectamos como sonoras, estas serían las llamadas VU. (de esta forma no estimamos su pitch) En el caso de las UV (tramas sonoras detectadas como sordas), creemos que es más conveniente tratar de diferenciarlas mediante las autocorrelaciones.
+```c
+if (trama == 0)
+    {
+      potencia_inicial = pot;
+      trama = 1;
+      return true;
+    }
+    if (pot > potencia_inicial + p_th || (r1norm > r1_th && rmaxnorm > rlag_th))
+    {                                                                     
+      return false; //Decidimos que es trama de VOZ / SONORA
+    }
+    else
+    {
+      return true; //Decidimos que es trama de SILENCIO / SORDA
+    }
+      /// \DONE A partir de los valores de potencia y autocorrelación, creamos un decisor de tramas sonoras/sordas
+  }
+```
 
 - Una vez completados los puntos anteriores, dispondrá de una primera versión del detector de pitch. El 
   resto del trabajo consiste, básicamente, en obtener las mejores prestaciones posibles con él.
@@ -70,6 +102,27 @@ void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) co
 
 	    Recuerde configurar los paneles de datos para que el desplazamiento de ventana sea el adecuado, que
 		en esta práctica es de 15 ms.
+> Miramos la potencia, y vemos más o menos la diferencia de potencia entre los segmentos de silencio y los sonoros. La primera trama de audio tiene 10 db’s de potencia, pero justo antes de hablar, nos situamos en los 24 db’s. Con 35 db’s ya se ha empezado a hablar realmente, con una potencia que luego va incrementando hasta casi 54 db’s. El silencio entre las dos primeras palabras se sitúa por debajo de los 35 db’s.
+
+> Para obtener los valores de la autocorrelación, que se calculan ya para cada trama, hacemos uso de la librería de entrada/salida de C++, y usamos la función cout que nos permite sacar por consola la información para cada trama (en este caso la potencia, la autocorrelación en 1 y en el desplazamiento equivalente al pitch normalizadas).
+
+```c
+#if 0
+    if (r[0] > 0.0F)
+      cout << pot << '\t' << r[1]/r[0] << '\t' << r[lag]/r[0] << endl;
+#endif
+
+    if (unvoiced(pot, r[1] / r[0], r[lag] / r[0]))
+      return 0;
+    else
+      return (float)samplingFreq / (float)lag; //retornamos el pitch en hercios
+```
+> Luego desde la consola, hacemos que en vez de que la salida se escriba en consola, se escriba en un fichero .out. Posteriormente, para ver la representación del r(1)/r(0) y r(lag)/r(0), recortamos las columnas respectivas con el comando ‘cut’ y lo ponemos en otros dos ficheros separados, que luego introduciremos en wavesurfer.
+
+<imagen graf>
+
+> Como podríamos esperar , las autocorrelaciones normalizadas de 1 y en el pitch, tienen un valor cercano a 1 ahi donde tenemos tramas sonoras. Esto es así ya que las muestras cercanas de las tramas de voz tienen una alta correlación entre ellas (de ahí que r(1)/r(0) tenga un valor alto. En el caso concreto de este audio >0.75 podríamos decir que se trata de una trama de voz), y el valor de r(lag)/r(0) tambien se espera que sea un valor cercano a 1, ya que la señal se parece con ella misma si la desplazamos de n_pitch muestras (o lag) (en este caso en particular podríamos decir que para valores superiores a 0.5 (o 0.4).
+> En base a estos resultado, hemos decidido ser más restrictivos con la autocorrelación en 1 normalizada, y más laxos en la del pitch. Obtenemos los siguientes resultados.
 
       - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
 	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
