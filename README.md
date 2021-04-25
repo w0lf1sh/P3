@@ -262,7 +262,9 @@ int main(int argc, const char *argv[]) {
 ### Center Clipping
 El center clipping es una técnica que trata de aumentar la intensidad de los armónicos de orden elevado, y poner a cero los instantes de tiempo en los que la señal tiene un amplitud menor, permitiendo asi una mayor robustez frente al ruido.
 Hemos decidido implementar las dos variantes del clipping existentes, con o sin offset. En base a las dos fórmulas siguientes, hemos propuesto el código de debajo:
+
 ![centerClipping](https://user-images.githubusercontent.com/65824775/116004128-a6e2ed80-a601-11eb-8419-f3dda092d9f7.png)
+
 Versión con offset:
 ```c
 /// \TODO
@@ -379,13 +381,14 @@ echo "El score más alto es de $SCOREMAX% y se da para los siguientes valores de
 echo "POTENCIA: $PMAX     AUTOCORRELACIÓN (en 1): $RMAX      AUTOCORRELACIÓN (en pitch): $RLAGMAX"
 ```
 Se hace el script ejecutable utilizando el comando chmod +x y el resultado que se ve en consola es el siguiente:
+
 ![resultadoScript](https://user-images.githubusercontent.com/65824775/116004490-291fe180-a603-11eb-9164-f495cdd11d6a.png)
 
 Realizar un script de estas magnitudes está bien, pero el peso computacional es elevado y el tiempo de ejecución también (todo depende de qué valores escojamos para los intervalos en el for). Tambien puede resultar en que nos adaptemos demasiado a esta base de datos, y que si nos evaluamos en otra base de datos, (o en una parte no visible de esta misma BD), el score final acabe por decrementarse.
 
 ### Implementación ventana de Hamming
 
-![eqHamming](https://user-images.githubusercontent.com/65824775/116004532-61272480-a603-11eb-91ea-dcc5b4004a45.png)
+<img src="https://user-images.githubusercontent.com/65824775/116004532-61272480-a603-11eb-91ea-dcc5b4004a45.png" width="500">
 
 Siguiendo la formula anterior se implementa la ventana de Hamming, aunque no se obtiene un mejor resultado de F-Score:
 
