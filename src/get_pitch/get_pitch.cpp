@@ -38,6 +38,7 @@ Arguments:
                     - If considered unvoiced, f0 must be set to f0 = 0
 )";
 
+//    -x FLOAT, --x_th=FLOAT         Offset de la técnica de preprocesado Center-Clipping [default: ]
 int main(int argc, const char *argv[]) {
 	/// \TODO 
 	///  Modify the program syntax and the call to **docopt()** in order to
@@ -71,6 +72,18 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
+  #if 1
+  float x_th = 0.00005;
+  for (unsigned int n=0; n < x.size(); n++){
+    if(x[n]>x_th){
+      x[n] = x[n] - x_th;
+    }else if(x[n]< -x_th){
+      x[n] = x[n] + x_th;
+    }else
+    x[n] = 0;
+  }
+  ///DONE Center clipping implementado
+  #endif
   
   // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
