@@ -39,7 +39,6 @@ Arguments:
                     - If considered unvoiced, f0 must be set to f0 = 0
 )";
 
-//    -x FLOAT, --x_th=FLOAT         Offset de la técnica de preprocesado Center-Clipping [default: ]
 int main(int argc, const char *argv[]) {
 	/// \TODO 
 	///  Modify the program syntax and the call to **docopt()** in order to
