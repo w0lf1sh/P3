@@ -11,7 +11,7 @@ b=0.5
 echo $a + $b | bc
 
 echo "Bucle for funcional"
-for i in $(seq 0.0 .05 10.0)
+for i in $(seq 0.0 .5 5.0)
 do  
     echo $i
 done
@@ -86,12 +86,12 @@ for i in ${numbers[@]}; do
 done
 
 #Comparaciones
-M=0
+M=${numbers[0]}
 N=${numbers[0]}
 
-if [[ $M > $N ]]
+if [[ $M -ge $N ]]
     then
-        echo "$M es mayor a $N"
+        echo "$M es mayor o igual a $N"
     else
         echo "$M es menor a $N"
 fi
@@ -122,3 +122,13 @@ if [[ ${numbers[indice]} < ${numbers[$((indice - 1))]} ]]
         echo "${numbers[indice]} es mayor a ${numbers[$((indice - 1))]}"
 fi
 
+#Comprobar si un fichero existe o no
+FILE=CURRENT_SCORE;
+
+FILE=/home/claptor/PAV/P3/CURRENT_SCORE
+if [ -f "$FILE" ]
+then
+    rm $FILE
+else
+    echo "No existe"
+fi

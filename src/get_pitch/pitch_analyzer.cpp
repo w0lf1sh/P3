@@ -79,7 +79,7 @@ namespace upc
       trama = 1;
       return true;
     }
-    if (pot > potencia_inicial + p_th || (r1norm > r1_th && rmaxnorm > rlag_th)) //Mejorar potencia inicial, jugar con el 10.
+    if (pot > potencia_inicial + p_th || (r1norm > r1_th || rmaxnorm > rlag_th)) //Mejorar potencia inicial, jugar con el 10.
     {                                                                     //Mejor resultado con pot +40. Más sensato usar + 30
       return false; //Decidimos que es trama de VOZ / SONORA
     }
