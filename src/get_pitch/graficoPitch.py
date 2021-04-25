@@ -3,14 +3,14 @@ import numpy as np
 
 
 #Read files
-computedPitch = np.loadtxt('../../pitch_db/train/rl001.f0')
-wavesurferPitch = np.loadtxt('../../rl001_wavesurfer.f0')
+computedPitch = np.loadtxt('pitch_db/train/rl001.f0')
+wavesurferPitch = np.loadtxt('rl001_wavesurfer.f0')
 
 
 #Time axis
 time = np.zeros(len(computedPitch))
 for i in range(len(computedPitch)):
-    time[i] = i * 0.015;
+    time[i] = i * 0.015
 
 
 #Plotting the graph
