@@ -128,10 +128,10 @@ if (trama == 0)
 > Como podríamos esperar , las autocorrelaciones normalizadas de 1 y en el pitch, tienen un valor cercano a 1 ahi donde tenemos tramas sonoras. Esto es así ya que las muestras cercanas de las tramas de voz tienen una alta correlación entre ellas (de ahí que r(1)/r(0) tenga un valor alto. En el caso concreto de este audio >0.75 podríamos decir que se trata de una trama de voz), y el valor de r(lag)/r(0) tambien se espera que sea un valor cercano a 1, ya que la señal se parece con ella misma si la desplazamos de n_pitch muestras (o lag) (en este caso en particular podríamos decir que para valores superiores a 0.5 (o 0.4).
 > En base a estos resultado, hemos decidido ser más restrictivos con la autocorrelación en 1 normalizada, y más laxos en la del pitch. Obtenemos los siguientes resultados.
 
-      - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
-	    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
-		ilustrativa del resultado de ambos detectores.
-  
+- Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
+    su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
+	ilustrativa del resultado de ambos detectores.
+
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
