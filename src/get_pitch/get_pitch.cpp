@@ -26,8 +26,8 @@ Usage:
 
 Options:
     -p FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: -20.0]
-    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.88]
-    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.445]
+    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.9]
+    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
     -x FLOAT, --x_th=FLOAT         Margen de center-clipping [default: 0.00007]
     -h, --help                     Show this screen
     --version                      Show the version of the project

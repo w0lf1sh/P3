@@ -20,7 +20,7 @@ then
 fi
 
 #Combinación de los valores de los umbrales
-for ((p_th=-20;p_th>=-20;p_th-=5))
+for ((p_th=-15;p_th>=-40;p_th-=5))
 do
     for r1_th in $(seq 0.0 .1 1) #((r1_th=0;r_th<=1;r_th+=0.05))
     do
