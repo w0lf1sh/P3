@@ -93,7 +93,7 @@ int main(int argc, const char *argv[]) {
       x[n] = 0;
     }
   }
-  ///DONE Center clipping implementado (sin offset)
+  /// \DONE Center clipping implementado (sin offset)
   #endif
   
   // Iterate for each frame and save values in f0 vector
