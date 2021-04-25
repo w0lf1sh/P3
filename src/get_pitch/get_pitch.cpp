@@ -10,7 +10,7 @@
 
 #include "docopt.h"
 
-#define FRAME_LEN   0.030 /* 30 ms. */
+#define FRAME_LEN 0.030   /* 30 ms. */
 #define FRAME_SHIFT 0.015 /* 15 ms. */
 
 using namespace std;
@@ -49,8 +49,8 @@ int main(int argc, const char *argv[]) {
         true,    // show help if requested
         "2.0");  // version string
 
-	std::string input_wav = args["<input-wav>"].asString();
-	std::string output_txt = args["<output-txt>"].asString();
+  std::string input_wav = args["<input-wav>"].asString();
+  std::string output_txt = args["<output-txt>"].asString();
 
   float p = std::stof(args["--p_th"].asString());
   float r1 = std::stof(args["--r1_th"].asString());
@@ -60,7 +60,8 @@ int main(int argc, const char *argv[]) {
   // Read input sound file
   unsigned int rate;
   vector<float> x;
-  if (readwav_mono(input_wav, rate, x) != 0) {
+  if (readwav_mono(input_wav, rate, x) != 0)
+  {
     cerr << "Error reading input file " << input_wav << " (" << strerror(errno) << ")\n";
     return -2;
   }
@@ -99,26 +100,49 @@ int main(int argc, const char *argv[]) {
   // Iterate for each frame and save values in f0 vector
   vector<float>::iterator iX;
   vector<float> f0;
-  for (iX = x.begin(); iX + n_len < x.end(); iX = iX + n_shift) {
-    float f = analyzer(iX, iX + n_len); //El operador '()' nos calcula el pitch del frame x (mirar pitch_analyzer.h) 
+  for (iX = x.begin(); iX + n_len < x.end(); iX = iX + n_shift)
+  {
+    float f = analyzer(iX, iX + n_len); //El operador '()' nos calcula el pitch del frame x (mirar pitch_analyzer.h)
     f0.push_back(f);
   }
 
   /// \TODO
   /// Postprocess the estimation in order to supress errors. For instance, a median filter
   /// or time-warping may be used.
+#if 1
+  for (unsigned int i = 1; i < f0.size() - 1; i++)
+  {
+    vector<float> arr;
+    arr.push_back(f0[i]);
+    arr.push_back(f0[i + 1]);
+    arr.push_back(f0[i - 1]);
 
-  // Write f0 contour into the output file
-  ofstream os(output_txt);
-  if (!os.good()) {
-    cerr << "Error reading output file " << output_txt << " (" << strerror(errno) << ")\n";
-    return -3;
+    //sorting array
+    if (arr[1] < arr[0])
+      swap(arr[0], arr[1]);
+
+    if (arr[2] < arr[1])
+    {
+      swap(arr[1], arr[2]);
+      if (arr[1] < arr[0])
+        swap(arr[1], arr[0]);
+    }
+    f0[i] = arr[1];
   }
+  /// \DONE Implementado filtro de 3 posiciones de mediana.
+#endif
+// Write f0 contour into the output file
+ofstream os(output_txt);
+if (!os.good())
+{
+  cerr << "Error reading output file " << output_txt << " (" << strerror(errno) << ")\n";
+  return -3;
+}
 
-  os << 0 << '\n'; //pitch at t=0
-  for (iX = f0.begin(); iX != f0.end(); ++iX) 
-    os << *iX << '\n';
-  os << 0 << '\n';//pitch at t=Dur
+os << 0 << '\n'; //pitch at t=0
+for (iX = f0.begin(); iX != f0.end(); ++iX)
+  os << *iX << '\n';
+os << 0 << '\n'; //pitch at t=Dur
 
-  return 0;
+return 0;
 }

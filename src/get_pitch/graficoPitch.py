@@ -14,8 +14,8 @@ for i in range(len(computedPitch)):
 
 
 #Plotting the graph
-plt.plot(time, computedPitch,'c', label = 'Computed Pitch')
-plt.plot(time, wavesurferPitch,'m', label = 'Wavesurfer Pitch')
+plt.plot(time, computedPitch,'m', label = 'Computed Pitch')
+plt.plot(time, wavesurferPitch,'c', label = 'Wavesurfer Pitch')
 
 plt.xlabel('Time(s)')
 plt.ylabel('Frequency(Hz)')
