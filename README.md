@@ -52,7 +52,8 @@ void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) co
 
 ![grafAutocorrelacion](https://user-images.githubusercontent.com/65824775/116000269-ca9d3800-a5ef-11eb-8e67-0e2404de3dbd.png)
 
-> Haciendo zoom en la primera zona:
+> Haciendo zoom en la primera zona, donde se ve el primer máximo secundario claramente:
+
 ![grafAutocorrelacionZoom](https://user-images.githubusercontent.com/65824775/116000357-27005780-a5f0-11eb-992c-f5b3a75a5c8f.png)
 
 
@@ -134,11 +135,39 @@ if (trama == 0)
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
 	`pitch_db/train`..
+> Tras ver las gráficas de wavesurfer, nos damos cuenta que la manera en que decidimos si una trama es voz o no se queda obsoleta. Sobre todo porque basamos la potencia en la primera trama del primer audio debido a que usamos variables estáticas. Por lo que ahora, queriendo prescindir de estas, y dándonos cuenta de que: 
+> 1) Como comentamos más arriba, las autocorrelaciones y las potencias no coinciden como nos gustaría para decidir si una trama es sorda, por lo que optamos por solo usar ORs y plantear las inecuaciones al revés, que es donde suelen existir las dudas
+> 2) La potencia es alta donde  la persona habla, pero también para algunos tramas donde hay ruido
+> 3) Como vemos para las autocorrelaciones (sobretodo en 1) esta es alta para tramos sonoros incluido tramos que no son realmente de voz (cuando el locutor ha acabado de hablar, vemos que la autocorrelación sigue siendo elevada)
+> Nos queda por lo tanto asi:
+```c
+if (pot < p_th || r1norm < r1_th || rmaxnorm < rlag_th) 
+    {                                                                     
+      return true; //Decidimos que es trama de SILENCIO / SORDA
+    }
+    else
+    {
+      return false; //Decidimos que es trama de VOZ / SONORA
+    }
+      /// \DONE A partir de los valores de potencia y autocorrelación, creamos un decisor de tramas sonoras/sordas
+  }
+```
+> Puntuación final habiendo implementado: Center clipping, Filtro de mediana y Ventana de Hamming.
+
+> Si ejecutamos el script de optimización de parámetros con esta nueva manera de decidir si una trama es de voz o no, nos sale los siguientes resultados:
+> Potencia: -20 dBs
+> Autocorrelación en 1: 0.9
+> Autocorrelación en desplazamiento pitch:  0.4
+
+> Dándonos un score de 89,71%
 
    * Inserte una gráfica en la que se vea con claridad el resultado de su detector de pitch junto al del
      detector de Wavesurfer. Aunque puede usarse Wavesurfer para obtener la representación, se valorará
 	 el uso de alternativas de mayor calidad (particularmente Python).
-   
+	 
+> Gráfica con el filtro de mediana ya implementado (se incluye una explicación en el apartado de Ejercicios de ampliación):
+
+![grafPitchComparison](https://user-images.githubusercontent.com/65824775/116001175-7f852400-a5f3-11eb-95a4-122ebcbdf9ac.png | width = 720)
 
 Ejercicios de ampliación
 ------------------------
