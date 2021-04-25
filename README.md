@@ -351,27 +351,27 @@ Tras esto, evaluamos los resultados con el nuevo programa “pitch_evaluate_thre
 
 ```c
 #Invocamos a get_pitch para cada audio de la BD con los valores de umbrales
-    for fwav in pitch_db/train/*.wav; 
-    do
-	ff0=${fwav/.wav/.f0}
-	$GETF0 $fwav $ff0 "-p $p_th -r $r1_th -m $rlag_th" > /dev/null || (echo "Error in $GETF0 $fwav $ff0"; exit 1)
-    done
-    #Evaluamos el rendimiento de nuestro pitch_analyzer, y guardamos el score final en el fichero 'scores'
-    $EVALUATE pitch_db/train/*.f0ref >> $FILE
+            for fwav in pitch_db/train/*.wav; 
+            do
+                ff0=${fwav/.wav/.f0}
+                $GETF0 $fwav $ff0 "-p $p_th -r $r1_th -m $rlag_th" > /dev/null || (echo "Error in $GETF0 $fwav $ff0"; exit 1)
+            done
+            #Evaluamos el rendimiento de nuestro pitch_analyzer, y guardamos el score final en el fichero 'scores'
+            $EVALUATE pitch_db/train/*.f0ref >> $FILE
 
-    scores=($(cat scores)) #Abrimos el ficheros scores
+            scores=($(cat scores)) #Abrimos el ficheros scores
 
-    if [[ ${scores[INDICE]} > $SCOREMAX ]]
-	then
-	    SCOREMAX=${scores[INDICE]}
-	    PMAX=$p_th
-	    RMAX=$r1_th
-	    RLAGMAX=$rlag_th
-    fi
-    INDICE=$((INDICE + 1))
-    echo "$INDICE"
-done
-done   
+            if [[ ${scores[INDICE]} > $SCOREMAX ]]
+                then
+                    SCOREMAX=${scores[INDICE]}
+                    PMAX=$p_th
+                    RMAX=$r1_th
+                    RLAGMAX=$rlag_th
+            fi
+            INDICE=$((INDICE + 1))
+            echo "$INDICE"
+        done
+    done   
 done
 ```
 Finalmente mostramos el resultado final en consola indicando el score máximo alcanzado y los valores de los umbrales con los que se alcanzo.
