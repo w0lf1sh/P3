@@ -20,11 +20,11 @@ then
 fi
 
 #Combinación de los valores de los umbrales
-for ((p_th=0;p_th<=50;p_th+=5))
+for ((p_th=-20;p_th>=-20;p_th-=5))
 do
-    for r1_th in $(seq 0.0 .15 1) #((r1_th=0;r_th<=1;r_th+=0.05))
+    for r1_th in $(seq 0.0 .1 1) #((r1_th=0;r_th<=1;r_th+=0.05))
     do
-        for rlag_th in $(seq 0.0 .15 1) #((rlag_th=0;rlag_th<=1;rlag_th+=0.05))
+        for rlag_th in $(seq 0.0 .1 1) #((rlag_th=0;rlag_th<=1;rlag_th+=0.05))
         do
             #Invocamos a get_pitch para cada audio de la BD con los valores de umbrales
             for fwav in pitch_db/train/*.wav; 

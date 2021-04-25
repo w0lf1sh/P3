@@ -25,9 +25,10 @@ Usage:
     get_pitch --version
 
 Options:
-    -p FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: 40.0]
-    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.85]
-    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.4]
+    -p FLOAT, --p_th=FLOAT         Margen en dBs para la potencia [default: -20.0]
+    -r FLOAT, --r1_th=FLOAT        Margen de la autocorrelación normalizada en 1 [default: 0.88]
+    -m FLOAT, --rlag_th=FLOAT      Margen de la autocorrelación normalizada en posición de pitch [default: 0.445]
+    -x FLOAT, --x_th=FLOAT         Margen de center-clipping [default: 0.00007]
     -h, --help                     Show this screen
     --version                      Show the version of the project
 
@@ -54,6 +55,7 @@ int main(int argc, const char *argv[]) {
   float p = std::stof(args["--p_th"].asString());
   float r1 = std::stof(args["--r1_th"].asString());
   float rlag = std::stof(args["--rlag_th"].asString());
+  float x_th = std::stof(args["--x_th"].asString());
   /// \DONE Paso de parámetros por consola implementado
   // Read input sound file
   unsigned int rate;
@@ -72,7 +74,7 @@ int main(int argc, const char *argv[]) {
   /// \TODO
   /// Preprocess the input signal in order to ease pitch estimation. For instance,
   /// central-clipping or low pass filtering may be used.
-  #if 1
+  #if 0
   float x_th = 0.00005;
   for (unsigned int n=0; n < x.size(); n++){
     if(x[n]>x_th){
@@ -82,7 +84,16 @@ int main(int argc, const char *argv[]) {
     }else
     x[n] = 0;
   }
-  ///DONE Center clipping implementado
+  ///DONE Center clipping implementado (con offset)
+  #endif
+
+   #if 1
+  for (unsigned int n=0; n < x.size(); n++){
+    if(x[n]<x_th && x[n]>-x_th){
+      x[n] = 0;
+    }
+  }
+  ///DONE Center clipping implementado (sin offset)
   #endif
   
   // Iterate for each frame and save values in f0 vector
