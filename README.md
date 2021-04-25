@@ -52,6 +52,9 @@ void PitchAnalyzer::autocorrelation(const vector<float> &x, vector<float> &r) co
 
 ![grafAutocorrelacion](https://user-images.githubusercontent.com/65824775/116000269-ca9d3800-a5ef-11eb-8e67-0e2404de3dbd.png)
 
+> Haciendo zoom en la primera zona:
+![grafAutocorrelacionZoom](https://user-images.githubusercontent.com/65824775/116000357-27005780-a5f0-11eb-992c-f5b3a75a5c8f.png)
+
 
    * Determine el mejor candidato para el periodo de pitch localizando el primer máximo secundario de la
      autocorrelación. Inserte a continuación el código correspondiente.
