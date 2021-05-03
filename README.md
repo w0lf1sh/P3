@@ -123,7 +123,11 @@ if (trama == 0)
 ```
 > Luego desde la consola, hacemos que en vez de que la salida se escriba en consola, se escriba en un fichero .out. Posteriormente, para ver la representación del r(1)/r(0) y r(lag)/r(0), recortamos las columnas respectivas con el comando ‘cut’ y lo ponemos en otros dos ficheros separados, que luego introduciremos en wavesurfer.
 
-<imagen graf>
+![comandosCut](https://user-images.githubusercontent.com/65824775/116886887-ee80ff00-ac29-11eb-837d-dbea729075db.png)
+
+![GraficaWavesurfer1](https://user-images.githubusercontent.com/65824775/116886921-f771d080-ac29-11eb-9cdd-855a505253e2.png)
+> Potencia, r1norm, rmaxnorm y señal rl001.wav
+
 
 > Como podríamos esperar , las autocorrelaciones normalizadas de 1 y en el pitch, tienen un valor cercano a 1 ahi donde tenemos tramas sonoras. Esto es así ya que las muestras cercanas de las tramas de voz tienen una alta correlación entre ellas (de ahí que r(1)/r(0) tenga un valor alto. En el caso concreto de este audio >0.75 podríamos decir que se trata de una trama de voz), y el valor de r(lag)/r(0) tambien se espera que sea un valor cercano a 1, ya que la señal se parece con ella misma si la desplazamos de n_pitch muestras (o lag) (en este caso en particular podríamos decir que para valores superiores a 0.5 (o 0.4).
 > En base a estos resultado, hemos decidido ser más restrictivos con la autocorrelación en 1 normalizada, y más laxos en la del pitch. Obtenemos los siguientes resultados.
@@ -131,6 +135,9 @@ if (trama == 0)
 - Use el detector de pitch implementado en el programa `wavesurfer` en una señal de prueba y compare
     su resultado con el obtenido por la mejor versión de su propio sistema.  Inserte una gráfica
 	ilustrativa del resultado de ambos detectores.
+
+![GraficaWavesurfer2](https://user-images.githubusercontent.com/65824775/116887047-1ec89d80-ac2a-11eb-95cb-3f07cf7985b1.png)
+> Estimación del pitch de wavesurfer, estimación de pitch de nuestra mejor versión y señal rl001.wav
 
   * Optimice los parámetros de su sistema de detección de pitch e inserte una tabla con las tasas de error
     y el *score* TOTAL proporcionados por `pitch_evaluate` en la evaluación de la base de datos 
